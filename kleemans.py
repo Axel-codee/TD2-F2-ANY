@@ -22,8 +22,10 @@ def lire_fichier(fichier):
 ### gestion des données de référence (cf. fichier letter_frequency.csv) #########################################
 
 def lire_csv(path):
-    """TODO: Renvoyer les données d'un fichier csv sous forme de listes de lignes. 
-    Hypothèses : fichier structuré à l'aide du séparateur ";" / encodé en utf-8. """
+    with open("letter_frequency.csv", encoding="utf-8") as fichier:
+        lecteur = csv.reader(fichier, delimiter=";")
+        data = list(lecteur)
+        return data
 
     
 def fixture_lire_csv(path): 
@@ -106,9 +108,18 @@ def structurer_reference_freqs(data) :
     """TODO: parcourir les langues dans la première ligne 
     pour chacune, construire un dictionnaire associant la lettre à sa fréquence dans la langue
     Renvoyer un dictionnaire contenant les dictionnaires produits. """
-    langues = []    # liste des langues qui devront être présentes dans le dictionnaire : ["French", "Spanish", ...]
-    freqs = []      # liste des dictionnaires de fréquences des caractères dans cette langue [ {'a': 0.07636, 'b': 0.00901, ...}, {'a': 0.11525,...}, ...] 
-    ref = {}        # résultat attendu : { 'French': { 'a': 0.07636, ...}, 'Spanish': { 'a': 0.11525,, ...}, ... }
+    langues = data[0][1:]
+    freqs = []
+
+    for indice_langue in range(1, len(data[0])):
+        frequences = {}
+        for ligne in data[1:]:
+            lettre = ligne[0]
+            frequence = float(ligne[indice_langue].strip("%*")) / 100
+            frequences[lettre] = frequence
+        freqs.append(frequences)
+
+    ref = dict(zip(langues, freqs))
     return ref
 
 
